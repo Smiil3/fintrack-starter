@@ -33,7 +33,7 @@ L'appli est dispo sur http://localhost:5173.
 
 ---
 
-*Projet fil rouge B3 Dev — My Digital School Bordeaux*
+_Projet fil rouge B3 Dev — My Digital School Bordeaux_
 
 ---
 
