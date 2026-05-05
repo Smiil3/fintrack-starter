@@ -32,6 +32,9 @@ export function multiply(a, b) {
  * BUG LATENT : ne gère pas la division par zéro (retourne Infinity ou NaN).
  */
 export function divide(a, b) {
+  if (a === 0 || b === 0) {
+    throw new Error('Pas de 0 dans une division.');
+  }
   return a / b;
 }
 

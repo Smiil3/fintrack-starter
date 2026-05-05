@@ -1,5 +1,4 @@
 import { add, divide, modulo, multiply, simpleInterest, subtract } from '../../src/calculator.js';
-
 describe('calculator', () => {
   describe('add', () => {
     it('retourne 5 quand on additionne 2 et 3', () => {
@@ -32,8 +31,8 @@ describe('calculator', () => {
     it('retourne 1.5 quand on divise 3 par 2', () => {
       expect(divide(3, 2)).toBe(1.5);
     });
-    it('retourne infinité quand on divise 2 par 0', () => {
-      expect(divide(2, 0)).toBe(Infinity);
+    it('retourne erreur quand on divise 2 par 0', () => {
+      expect(() => divide(2, 0)).toThrow(Error('Pas de 0 dans une division.'));
     });
   });
 
