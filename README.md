@@ -2,6 +2,8 @@
 
 Application de gestion de budget personnel.
 
+[![CI](https://github.com/Smiil3/fintrack-starter/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Smiil3/fintrack-starter/actions/workflows/ci.yml)
+
 ## Stack
 
 - React 18
