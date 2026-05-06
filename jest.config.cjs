@@ -3,4 +3,5 @@ module.exports = {
     '^.+\\.[jt]sx?$': 'babel-jest',
   },
   testEnvironment: 'node',
+  testPathIgnorePatterns: ['/node_modules/', '/e2e/'],
 };
