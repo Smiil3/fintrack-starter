@@ -94,7 +94,25 @@ describe('export csv', () => {
     expect(result).toEqual(`1,${date},Salaire,2400,credit,EUR,revenu`);
   });
 
-  it('Les caractères spéciaux (virgules, guillemets) sont échappés selon la norme RFC 4180', () => {});
+  it('Les caractères spéciaux (virgules, guillemets) sont échappés selon la norme RFC 4180', () => {
+    //Given
+    const date = new Date().toISOString();
+    const data = [
+      {
+        id: 1,
+        date: date,
+        label: 'Courses, "bio"',
+        amount: 42,
+        type: 'debit',
+        currency: 'EUR',
+        category: 'alimentation',
+      },
+    ];
 
-  it('Un tableau vide retourne juste l’en-tête CSV.', () => {});
+    //When
+    const result = transactionsToCsvRows(data);
+
+    //Then
+    expect(result).toEqual(`1,${date},"Courses, ""bio""",42,debit,EUR,alimentation`);
+  });
 });
