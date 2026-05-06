@@ -34,10 +34,44 @@ describe('export csv', () => {
 
   it('Chaque transaction devient une ligne CSV (date, libellé, montant, catégorie)', () => {
     //Given
+    const date = new Date().toISOString();
     const data = [
       {
         id: 1,
-        date: new Date('01/01/2026').toISOString(),
+        date: date,
+        label: 'Salaire',
+        amount: 2400,
+        type: 'credit',
+        currency: 'EUR',
+        category: 'revenu',
+      },
+      {
+        id: 2,
+        date: date,
+        label: 'Loyer',
+        amount: 850,
+        type: 'debit',
+        currency: 'EUR',
+        category: 'logement',
+      },
+    ];
+
+    //When
+    const result = transactionsToCsvRows(data);
+
+    //Then
+    expect(result).toEqual(
+      `1,${date},Salaire,2400,credit,EUR,revenu\n2,${date},Loyer,850,debit,EUR,logement`,
+    );
+  });
+
+  it('Les transactions hors du mois en cours sont filtrées', () => {
+    //Given
+    const date = new Date().toISOString();
+    const data = [
+      {
+        id: 1,
+        date: date,
         label: 'Salaire',
         amount: 2400,
         type: 'credit',
@@ -54,17 +88,11 @@ describe('export csv', () => {
         category: 'logement',
       },
     ];
-
     //When
     const result = transactionsToCsvRows(data);
-
     //Then
-    expect(result).toEqual(
-      '1,2025-12-31T23:00:00.000Z,Salaire,2400,credit,EUR,revenu\n2,2025-12-31T23:00:00.000Z,Loyer,850,debit,EUR,logement',
-    );
+    expect(result).toEqual(`1,${date},Salaire,2400,credit,EUR,revenu`);
   });
-
-  it('Les transactions hors du mois en cours sont filtrées', () => {});
 
   it('Les caractères spéciaux (virgules, guillemets) sont échappés selon la norme RFC 4180', () => {});
 
