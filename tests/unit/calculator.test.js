@@ -1,4 +1,15 @@
-import { add, divide, modulo, multiply, simpleInterest, subtract } from '../../src/calculator.js';
+import {
+  add,
+  compoundInterest,
+  computeBalance,
+  convertCurrency,
+  divide,
+  formatAmount,
+  modulo,
+  multiply,
+  simpleInterest,
+  subtract,
+} from '../../src/calculator.js';
 describe('calculator', () => {
   describe('add', () => {
     it('retourne 5 quand on additionne 2 et 3', () => {
@@ -51,6 +62,65 @@ describe('calculator', () => {
     });
     it('retourne 0.6 pour un capital de 10 a 3% sur 2 ans', () => {
       expect(simpleInterest(10, 3, 2)).toBe(0.6);
+    });
+  });
+
+  describe('compoundInterest', () => {
+    it('retourne 10 pour 100 à 10% sur 1 an', () => {
+      expect(compoundInterest(100, 10, 1)).toBeCloseTo(10, 10);
+    });
+
+    it('retourne 0 quand le taux est nul', () => {
+      expect(compoundInterest(250, 0, 3)).toBe(0);
+    });
+  });
+
+  describe('convertCurrency', () => {
+    it('convertit 10 avec un taux de 1.2 en 12', () => {
+      expect(convertCurrency(10, 1.2)).toBe(12);
+    });
+
+    it('gère les montants négatifs', () => {
+      expect(convertCurrency(-5, 2)).toBe(-10);
+    });
+  });
+
+  describe('computeBalance', () => {
+    it('retourne 0 pour une liste vide', () => {
+      expect(computeBalance([])).toBe(0);
+    });
+
+    it('additionne les credits et soustrait les debits', () => {
+      expect(
+        computeBalance([
+          { amount: 100, type: 'credit' },
+          { amount: 40, type: 'debit' },
+          { amount: 15.5, type: 'credit' },
+        ]),
+      ).toBe(75.5);
+    });
+
+    it('traite tout type non credit comme un debit', () => {
+      expect(
+        computeBalance([
+          { amount: 10, type: 'credit' },
+          { amount: 3, type: 'autre' },
+        ]),
+      ).toBe(7);
+    });
+  });
+
+  describe('formatAmount', () => {
+    it('formate un montant EUR avec le symbole euro', () => {
+      expect(formatAmount(12)).toBe('12.00 €');
+    });
+
+    it('formate un montant USD avec le symbole dollar', () => {
+      expect(formatAmount(8.5, 'USD')).toBe('8.50 $');
+    });
+
+    it('retourne le code devise si le symbole est inconnu', () => {
+      expect(formatAmount(3.456, 'JPY')).toBe('3.46 JPY');
     });
   });
 });
