@@ -25,3 +25,29 @@ export function transactionsToCsvRows(rows) {
   }
   return rowsString.join('\n');
 }
+
+export function buildTransactionsCsv(rows) {
+  const header = transactionsToCsvHeader(rows);
+  const body = transactionsToCsvRows(rows);
+  return [header, body].filter(Boolean).join('\n');
+}
+
+export function downloadCsv(csvContent, filename = 'fintrack-transactions.csv') {
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+
+  link.href = url;
+  link.download = filename;
+  link.style.display = 'none';
+
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+export function downloadTransactionsCsv(rows, filename) {
+  const csvContent = buildTransactionsCsv(rows);
+  downloadCsv(csvContent, filename);
+}

@@ -1,6 +1,5 @@
 import { todayMinus } from '../../src/seed.js';
 import { transactionsToCsvHeader, transactionsToCsvRows } from '../../src/export-csv.js';
-
 describe('export csv', () => {
   it('Une fonction qui prend un tableau de transactions et retourne une chaîne CSV avec une ligne d’en-tête', () => {
     //Given
@@ -24,14 +23,11 @@ describe('export csv', () => {
         category: 'logement',
       },
     ];
-
     //When
     const result = transactionsToCsvHeader(data);
-
     //Then
     expect(result).toEqual('id,date,label,amount,type,currency,category');
   });
-
   it('Chaque transaction devient une ligne CSV (date, libellé, montant, catégorie)', () => {
     //Given
     const date = new Date().toISOString();
@@ -55,16 +51,13 @@ describe('export csv', () => {
         category: 'logement',
       },
     ];
-
     //When
     const result = transactionsToCsvRows(data);
-
     //Then
     expect(result).toEqual(
       `1,${date},Salaire,2400,credit,EUR,revenu\n2,${date},Loyer,850,debit,EUR,logement`,
     );
   });
-
   it('Les transactions hors du mois en cours sont filtrées', () => {
     //Given
     const date = new Date().toISOString();
@@ -93,7 +86,6 @@ describe('export csv', () => {
     //Then
     expect(result).toEqual(`1,${date},Salaire,2400,credit,EUR,revenu`);
   });
-
   it('Les caractères spéciaux (virgules, guillemets) sont échappés selon la norme RFC 4180', () => {
     //Given
     const date = new Date().toISOString();
@@ -108,10 +100,8 @@ describe('export csv', () => {
         category: 'alimentation',
       },
     ];
-
     //When
     const result = transactionsToCsvRows(data);
-
     //Then
     expect(result).toEqual(`1,${date},"Courses, ""bio""",42,debit,EUR,alimentation`);
   });

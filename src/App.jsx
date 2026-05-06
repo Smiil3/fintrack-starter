@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { computeBalance, formatAmount, simpleInterest } from './calculator.js';
+import { downloadTransactionsCsv } from './export-csv.js';
 import { seedTransactions } from './seed.js';
 
 export default function App() {
@@ -37,6 +38,10 @@ export default function App() {
     setShowForm(false);
   }
 
+  function handleExportCsv() {
+    downloadTransactionsCsv(transactions);
+  }
+
   return (
     <div className="app">
       <header className="header">
@@ -71,8 +76,8 @@ export default function App() {
           <button className="btn btn-primary" onClick={() => setShowForm((s) => !s)}>
             {showForm ? 'Annuler' : 'Ajouter une transaction'}
           </button>
-          <button className="btn btn-ghost" disabled title="À implémenter en J2">
-            Exporter en CSV
+          <button className="btn btn-ghost" type="button" onClick={handleExportCsv}>
+            Télécharger le CSV
           </button>
         </section>
 
