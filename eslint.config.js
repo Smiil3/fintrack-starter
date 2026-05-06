@@ -11,6 +11,13 @@ export default defineConfig([
     languageOptions: { globals: globals.browser },
   },
   {
+    // fichiers de configuration / scripts node (ex: playwright.config.js)
+    files: ['*.config.{js,cjs,mjs}', 'playwright.config.js', '.eslintrc.{js,cjs,mjs}'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
+  {
     files: ['tests/**/*.js'], // ou **/*.test.js si tu préfères
     languageOptions: {
       globals: {
