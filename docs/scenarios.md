@@ -34,4 +34,3 @@ Quand l'utilisateur exporte les transactions en CSV complet
 Alors la première ligne contient l'en-tête des colonnes  
 Et les lignes suivantes contiennent les données des transactions  
 Et l'ensemble est fusionné en un seul contenu CSV
-

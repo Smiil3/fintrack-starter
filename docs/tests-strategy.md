@@ -11,10 +11,11 @@ Sans UI, sans base de données, sans navigation, juste la logique pure.
 
 Un test d’intégration vérifie que plusieurs unités fonctionnent correctement ensemble.
 On préfère un test d’intégration quand le risque vient surtout des interactions :
+
 - format de données qui circule entre modules
 - enchaînement d’actions utilisateur + mise à jour d’interface
 - régressions qui n’apparaissent pas dans des fonctions testées isolément
-Exemple FinTrack : tester que l’ajout d’une transaction dans src/App.jsx met bien à jour l’affichage du solde via la logique de src/calculator.js.
+  Exemple FinTrack : tester que l’ajout d’une transaction dans src/App.jsx met bien à jour l’affichage du solde via la logique de src/calculator.js.
 
 3. Qu’est-ce qu’un test E2E ? Quel est son principal défaut ?
 
@@ -32,6 +33,7 @@ Si on suit la pyramide :
 5 tests E2E
 
 Justification :
+
 - beaucoup d’unitaires pour sécuriser rapidement la logique métier
 - un bon bloc d’intégration pour couvrir les flux entre composants
 - peu de E2E, réservés aux parcours critiques
