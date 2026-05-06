@@ -1,7 +1,7 @@
 import { todayMinus } from '../../src/seed.js';
 import { transactionsToCsvHeader, transactionsToCsvRows } from '../../src/export-csv.js';
 describe('export csv', () => {
-  it('Une fonction qui prend un tableau de transactions et retourne une chaîne CSV avec une ligne d’en-tête', () => {
+  it('given a list of transactions, when generating CSV header, then returns all column names separated by commas', () => {
     //Given
     const data = [
       {
@@ -28,7 +28,7 @@ describe('export csv', () => {
     //Then
     expect(result).toEqual('id,date,label,amount,type,currency,category');
   });
-  it('Chaque transaction devient une ligne CSV (date, libellé, montant, catégorie)', () => {
+  it('given valid transactions from current month, when exporting to CSV rows, then each transaction becomes a line with comma-separated values', () => {
     //Given
     const date = new Date().toISOString();
     const data = [
@@ -58,7 +58,7 @@ describe('export csv', () => {
       `1,${date},Salaire,2400,credit,EUR,revenu\n2,${date},Loyer,850,debit,EUR,logement`,
     );
   });
-  it('Les transactions hors du mois en cours sont filtrées', () => {
+  it('given transactions from current month and older months, when exporting to CSV rows, then only transactions from last 30 days are included', () => {
     //Given
     const date = new Date().toISOString();
     const data = [
@@ -86,7 +86,7 @@ describe('export csv', () => {
     //Then
     expect(result).toEqual(`1,${date},Salaire,2400,credit,EUR,revenu`);
   });
-  it('Les caractères spéciaux (virgules, guillemets) sont échappés selon la norme RFC 4180', () => {
+  it('given a transaction with special characters like commas and quotes, when exporting to CSV rows, then special characters are escaped according to RFC 4180', () => {
     //Given
     const date = new Date().toISOString();
     const data = [
