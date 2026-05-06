@@ -1,10 +1,29 @@
-import { seedTransactions } from '../../src/seed.js';
-import { transactionsToCsvHeader } from '../../src/export-csv.js';
+import { todayMinus } from '../../src/seed.js';
+import { transactionsToCsvHeader, transactionsToCsvRows } from '../../src/export-csv.js';
 
 describe('export csv', () => {
   it('Une fonction qui prend un tableau de transactions et retourne une chaîne CSV avec une ligne d’en-tête', () => {
     //Given
-    const data = [...seedTransactions];
+    const data = [
+      {
+        id: 1,
+        date: todayMinus(28),
+        label: 'Salaire',
+        amount: 2400,
+        type: 'credit',
+        currency: 'EUR',
+        category: 'revenu',
+      },
+      {
+        id: 2,
+        date: todayMinus(27),
+        label: 'Loyer',
+        amount: 850,
+        type: 'debit',
+        currency: 'EUR',
+        category: 'logement',
+      },
+    ];
 
     //When
     const result = transactionsToCsvHeader(data);
@@ -13,7 +32,37 @@ describe('export csv', () => {
     expect(result).toEqual('id,date,label,amount,type,currency,category');
   });
 
-  it('Chaque transaction devient une ligne CSV (date, libellé, montant, catégorie)', () => {});
+  it('Chaque transaction devient une ligne CSV (date, libellé, montant, catégorie)', () => {
+    //Given
+    const data = [
+      {
+        id: 1,
+        date: new Date('01/01/2026').toISOString(),
+        label: 'Salaire',
+        amount: 2400,
+        type: 'credit',
+        currency: 'EUR',
+        category: 'revenu',
+      },
+      {
+        id: 2,
+        date: new Date('01/01/2026').toISOString(),
+        label: 'Loyer',
+        amount: 850,
+        type: 'debit',
+        currency: 'EUR',
+        category: 'logement',
+      },
+    ];
+
+    //When
+    const result = transactionsToCsvRows(data);
+
+    //Then
+    expect(result).toEqual(
+      '1,2025-12-31T23:00:00.000Z,Salaire,2400,credit,EUR,revenu\n2,2025-12-31T23:00:00.000Z,Loyer,850,debit,EUR,logement',
+    );
+  });
 
   it('Les transactions hors du mois en cours sont filtrées', () => {});
 
