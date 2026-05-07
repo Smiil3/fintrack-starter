@@ -11,6 +11,22 @@
 
 var TYPES = ['credit', 'debit', 'transfer'];
 
+// constantes nommées pour éviter les magic numbers
+const DEFAULT_THRESHOLD = 1000;
+const EXCHANGE_RATES = {
+  USD: { EUR: 0.92 },
+  EUR: { USD: 1.08, GBP: 0.85 },
+  GBP: { EUR: 1.17 },
+};
+
+function getExchangeRate(from, to) {
+  if (!from || from === to) return 1;
+  if (EXCHANGE_RATES[from] && EXCHANGE_RATES[from][to]) return EXCHANGE_RATES[from][to];
+  // recherche inverse si possible (e.g. EUR -> GBP provided GBP->EUR exists)
+  if (EXCHANGE_RATES[to] && EXCHANGE_RATES[to][from]) return 1 / EXCHANGE_RATES[to][from];
+  return 1; // fallback
+}
+
 // fonction utilitaire (utilisée nulle part ailleurs ?)
 function fmt(d) {
   var dd = d.getDate();
@@ -41,33 +57,21 @@ export function processTransactions(txs, opts) {
   var warnings = [];
   var i, j;
   var tx;
-  var rate;
   var converted;
   var category;
-  var month;
-  var year;
-  var threshold;
 
-  // si pas d'options on met des valeurs par défaut
-  if (!opts) {
-    opts = {};
-  }
-  if (!opts.currency) {
-    opts.currency = 'EUR';
-  }
-  if (!opts.month) {
-    opts.month = new Date().getMonth();
-  }
-  if (!opts.year) {
-    opts.year = new Date().getFullYear();
-  }
-  if (opts.threshold === undefined) {
-    opts.threshold = 1000;
-  }
+  // Normaliser les options sans muter l'objet passé
+  const options = {
+    currency: 'EUR',
+    month: new Date().getMonth(),
+    year: new Date().getFullYear(),
+    threshold: DEFAULT_THRESHOLD,
+    ...(opts || {}),
+  };
 
-  threshold = opts.threshold;
-  month = opts.month;
-  year = opts.year;
+  const threshold = options.threshold;
+  const month = options.month;
+  const year = options.year;
 
   // boucle principale
   for (i = 0; i < txs.length; i++) {
@@ -108,20 +112,9 @@ export function processTransactions(txs, opts) {
       continue;
     }
 
-    // conversion devise si besoin
-    if (tx.currency && tx.currency !== opts.currency) {
-      // taux en dur, à mettre à jour à la main tous les mois...
-      if (tx.currency === 'USD' && opts.currency === 'EUR') {
-        rate = 0.92;
-      } else if (tx.currency === 'EUR' && opts.currency === 'USD') {
-        rate = 1.08;
-      } else if (tx.currency === 'GBP' && opts.currency === 'EUR') {
-        rate = 1.17;
-      } else if (tx.currency === 'EUR' && opts.currency === 'GBP') {
-        rate = 0.85;
-      } else {
-        rate = 1; // fallback
-      }
+    // conversion devise si besoin (utilise getExchangeRate)
+    if (tx.currency && tx.currency !== options.currency) {
+      const rate = getExchangeRate(tx.currency, options.currency);
       converted = tx.amount * rate;
     } else {
       converted = tx.amount;
@@ -159,8 +152,9 @@ export function processTransactions(txs, opts) {
       category = 'autre';
     }
 
-    // alertes
-    if (converted > threshold && tx.type === 'debit') {
+    // alertes (calculer une seule fois la condition pour éviter la duplication)
+    var flagged = converted > threshold && tx.type === 'debit';
+    if (flagged) {
       warnings.push(
         'transaction ' + i + ' depasse le seuil (' + converted + ' > ' + threshold + ')',
       );
@@ -186,11 +180,11 @@ export function processTransactions(txs, opts) {
     item.label = tx.label || '(sans libellé)';
     item.amount = converted;
     item.originalAmount = tx.amount;
-    item.originalCurrency = tx.currency || opts.currency;
-    item.currency = opts.currency;
+    item.originalCurrency = tx.currency || options.currency;
+    item.currency = options.currency;
     item.type = tx.type;
     item.category = category;
-    item.flagged = converted > threshold && tx.type === 'debit';
+    item.flagged = flagged;
     result.push(item);
   }
 
